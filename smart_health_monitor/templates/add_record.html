@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Add Reading - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>Log a New Health Reading</h1>
+    <p class="page-subtitle">Enter your current vitals below. We'll automatically flag anything unusual.</p>
+    <form method="POST" action="{{ url_for('add_record') }}" class="card record-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="heart_rate">Heart Rate (bpm) *</label>
+                <input type="number" step="0.1" id="heart_rate" name="heart_rate" required placeholder="e.g. 72">
+                <span class="field-hint">Normal: 60-100 bpm</span>
+            </div>
+            <div class="form-group">
+                <label for="temperature">Temperature (&deg;C) *</label>
+                <input type="number" step="0.1" id="temperature" name="temperature" required placeholder="e.g. 36.8">
+                <span class="field-hint">Normal: 36.1-37.5 &deg;C</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="bp_systolic">Systolic BP (mmHg) *</label>
+                <input type="number" step="0.1" id="bp_systolic" name="bp_systolic" required placeholder="e.g. 118">
+                <span class="field-hint">Normal: 90-120 mmHg</span>
+            </div>
+            <div class="form-group">
+                <label for="bp_diastolic">Diastolic BP (mmHg) *</label>
+                <input type="number" step="0.1" id="bp_diastolic" name="bp_diastolic" required placeholder="e.g. 76">
+                <span class="field-hint">Normal: 60-80 mmHg</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="oxygen_level">Oxygen Level SpO2 (%) *</label>
+                <input type="number" step="0.1" id="oxygen_level" name="oxygen_level" required placeholder="e.g. 98">
+                <span class="field-hint">Normal: 95-100%</span>
+            </div>
+            <div class="form-group">
+                <label for="glucose_level">Glucose Level (mg/dL) *</label>
+                <input type="number" step="0.1" id="glucose_level" name="glucose_level" required placeholder="e.g. 95">
+                <span class="field-hint">Normal: 70-140 mg/dL</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="weight">Weight (kg)</label>
+                <input type="number" step="0.1" id="weight" name="weight" placeholder="optional">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="How are you feeling today? Any symptoms?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Save Reading</button>
+    </form>
+</div>
+{% endblock %}

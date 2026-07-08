@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}My Records - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>My Health Records</h1>
+    <a href="{{ url_for('add_record') }}" class="btn btn-primary">+ Add New Reading</a>
+</div>
+
+<div class="card table-card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Heart Rate</th>
+                <th>Blood Pressure</th>
+                <th>Temp</th>
+                <th>O2 %</th>
+                <th>Glucose</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in pagination.items %}
+            <tr>
+                <td>{{ r.recorded_at.strftime('%d %b %Y, %H:%M') }}</td>
+                <td>{{ r.heart_rate }} bpm</td>
+                <td>{{ r.bp_systolic }}/{{ r.bp_diastolic }}</td>
+                <td>{{ r.temperature }}&deg;C</td>
+                <td>{{ r.oxygen_level }}%</td>
+                <td>{{ r.glucose_level }} mg/dL</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status|upper }}</span></td>
+                <td>
+                    <form method="POST" action="{{ url_for('delete_record', record_id=r.id) }}"
+                          onsubmit="return confirm('Delete this record?');" class="inline-form">
+                        <button type="submit" class="btn-link btn-link-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="empty-cell">No records yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('records', page=pagination.prev_num) }}">&laquo; Previous</a>
+    {% endif %}
+    <span>Page {{ pagination.page }} of {{ pagination.pages or 1 }}</span>
+    {% if pagination.has_next %}
+        <a href="{{ url_for('records', page=pagination.next_num) }}">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endblock %}

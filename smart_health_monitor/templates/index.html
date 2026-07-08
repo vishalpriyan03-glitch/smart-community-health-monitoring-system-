@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Home - Smart Community Health Monitoring System{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-text">
+        <h1>Smart Community <span class="brand-accent">Health Monitoring</span> System</h1>
+        <p>Track vitals, detect early warning signs, and keep your whole community healthier &mdash;
+           together. Real-time alerts. Simple dashboards. Built for everyone.</p>
+        <div class="hero-actions">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary">Create Free Account</a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="hero-stats">
+        <div class="stat-card">
+            <span class="stat-number">{{ total_users }}</span>
+            <span class="stat-label">Community Members</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number">{{ total_records }}</span>
+            <span class="stat-label">Health Readings Logged</span>
+        </div>
+        <div class="stat-card stat-warn">
+            <span class="stat-number">{{ active_alerts }}</span>
+            <span class="stat-label">Active Alerts</span>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <h2>How it helps your community</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">💓</div>
+            <h3>Track Vitals</h3>
+            <p>Log heart rate, blood pressure, temperature, oxygen level, glucose, and weight in seconds.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚠️</div>
+            <h3>Automatic Alerts</h3>
+            <p>Abnormal readings are flagged instantly so patients and health workers can act early.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Visual Trends</h3>
+            <p>Interactive charts show how your vitals change over time, right on your dashboard.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏘️</div>
+            <h3>Community Overview</h3>
+            <p>Health workers get a real-time view of community-wide averages and critical cases.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

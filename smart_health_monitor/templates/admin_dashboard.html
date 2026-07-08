@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Community Health Overview</h1>
+</div>
+
+<div class="vitals-grid">
+    <div class="vital-card">
+        <span class="vital-label">Total Patients</span>
+        <span class="vital-value">{{ total_patients }}</span>
+    </div>
+    <div class="vital-card">
+        <span class="vital-label">Total Readings Logged</span>
+        <span class="vital-value">{{ total_records }}</span>
+    </div>
+    <div class="vital-card vital-danger">
+        <span class="vital-label">Critical Readings</span>
+        <span class="vital-value">{{ critical_count }}</span>
+    </div>
+    <div class="vital-card vital-warn">
+        <span class="vital-label">Warning Readings</span>
+        <span class="vital-value">{{ warning_count }}</span>
+    </div>
+    <div class="vital-card vital-good">
+        <span class="vital-label">Normal Readings</span>
+        <span class="vital-value">{{ normal_count }}</span>
+    </div>
+</div>
+
+<div class="card chart-card">
+    <h3>Community Averages (last 30 days)</h3>
+    {% if averages and averages[0] %}
+    <div class="avg-grid">
+        <div><strong>{{ '%.1f'|format(averages[0]) }}</strong><span>Heart Rate (bpm)</span></div>
+        <div><strong>{{ '%.0f'|format(averages[1]) }}/{{ '%.0f'|format(averages[2]) }}</strong><span>Blood Pressure</span></div>
+        <div><strong>{{ '%.1f'|format(averages[3]) }}</strong><span>Temperature (&deg;C)</span></div>
+        <div><strong>{{ '%.1f'|format(averages[4]) }}</strong><span>Oxygen (%)</span></div>
+        <div><strong>{{ '%.1f'|format(averages[5]) }}</strong><span>Glucose (mg/dL)</span></div>
+    </div>
+    {% else %}
+    <p class="empty-cell">No data recorded in the last 30 days.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Active Alerts ({{ active_alerts|length }})</h3>
+    {% if active_alerts %}
+    <table class="data-table">
+        <thead><tr><th>Patient</th><th>Severity</th><th>Message</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+        {% for alert in active_alerts %}
+            <tr>
+                <td><a href="{{ url_for('admin_patient_detail', user_id=alert.user_id) }}">{{ alert.patient.username }}</a></td>
+                <td><span class="badge badge-{{ alert.severity }}">{{ alert.severity|upper }}</span></td>
+                <td>{{ alert.message }}</td>
+                <td>{{ alert.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('resolve_alert', alert_id=alert.id) }}" class="inline-form">
+                        <button type="submit" class="btn-link">Resolve</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-cell">No active alerts. Community is healthy! 🎉</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Recently Registered Patients</h3>
+    <table class="data-table">
+        <thead><tr><th>Username</th><th>Age</th><th>Gender</th><th>Joined</th><th></th></tr></thead>
+        <tbody>
+        {% for p in recent_patients %}
+            <tr>
+                <td>{{ p.username }}</td>
+                <td>{{ p.age or '—' }}</td>
+                <td>{{ p.gender or '—' }}</td>
+                <td>{{ p.created_at.strftime('%d %b %Y') }}</td>
+                <td><a href="{{ url_for('admin_patient_detail', user_id=p.id) }}">View</a></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="5" class="empty-cell">No patients yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

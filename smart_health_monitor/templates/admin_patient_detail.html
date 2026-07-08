@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.username }} - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ patient.username }}'s Health Record</h1>
+    <a href="{{ url_for('admin_patients') }}" class="btn btn-secondary">&larr; Back to Patients</a>
+</div>
+
+<div class="card">
+    <h3>Patient Info</h3>
+    <p><strong>Email:</strong> {{ patient.email }} &nbsp; | &nbsp;
+       <strong>Age:</strong> {{ patient.age or '—' }} &nbsp; | &nbsp;
+       <strong>Gender:</strong> {{ patient.gender or '—' }} &nbsp; | &nbsp;
+       <strong>Phone:</strong> {{ patient.phone or '—' }}</p>
+</div>
+
+<div class="card">
+    <h3>Alerts</h3>
+    {% if alerts %}
+    <table class="data-table">
+        <thead><tr><th>Severity</th><th>Message</th><th>Date</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for alert in alerts %}
+            <tr>
+                <td><span class="badge badge-{{ alert.severity }}">{{ alert.severity|upper }}</span></td>
+                <td>{{ alert.message }}</td>
+                <td>{{ alert.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                <td>{{ 'Resolved' if alert.resolved else 'Active' }}</td>
+                <td>
+                    {% if not alert.resolved %}
+                    <form method="POST" action="{{ url_for('resolve_alert', alert_id=alert.id) }}" class="inline-form">
+                        <button type="submit" class="btn-link">Resolve</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-cell">No alerts for this patient.</p>
+    {% endif %}
+</div>
+
+<div class="card table-card">
+    <h3>Recent Readings</h3>
+    <table class="data-table">
+        <thead>
+            <tr><th>Date</th><th>Heart Rate</th><th>Blood Pressure</th><th>Temp</th><th>O2 %</th><th>Glucose</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        {% for r in records %}
+            <tr>
+                <td>{{ r.recorded_at.strftime('%d %b %Y, %H:%M') }}</td>
+                <td>{{ r.heart_rate }} bpm</td>
+                <td>{{ r.bp_systolic }}/{{ r.bp_diastolic }}</td>
+                <td>{{ r.temperature }}&deg;C</td>
+                <td>{{ r.oxygen_level }}%</td>
+                <td>{{ r.glucose_level }} mg/dL</td>
+                <td><span class="badge badge-{{ r.status }}">{{ r.status|upper }}</span></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7" class="empty-cell">No readings recorded yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

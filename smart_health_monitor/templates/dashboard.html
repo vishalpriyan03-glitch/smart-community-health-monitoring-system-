@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Hello, {{ current_user.username }} 👋</h1>
+    <a href="{{ url_for('add_record') }}" class="btn btn-primary">+ Add New Reading</a>
+</div>
+
+{% if alerts %}
+<div class="alert-banner">
+    <strong>⚠️ You have {{ alerts|length }} active alert(s):</strong>
+    <ul>
+        {% for alert in alerts %}
+        <li>
+            <span class="badge badge-{{ alert.severity }}">{{ alert.severity|upper }}</span>
+            {{ alert.message }} &mdash; {{ alert.created_at.strftime('%d %b %Y, %H:%M') }}
+            <form method="POST" action="{{ url_for('resolve_alert', alert_id=alert.id) }}" class="inline-form">
+                <button type="submit" class="btn-link">Mark resolved</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if latest %}
+<div class="vitals-grid">
+    <div class="vital-card">
+        <span class="vital-label">Heart Rate</span>
+        <span class="vital-value">{{ latest.heart_rate }} <small>bpm</small></span>
+    </div>
+    <div class="vital-card">
+        <span class="vital-label">Blood Pressure</span>
+        <span class="vital-value">{{ latest.bp_systolic }}/{{ latest.bp_diastolic }} <small>mmHg</small></span>
+    </div>
+    <div class="vital-card">
+        <span class="vital-label">Temperature</span>
+        <span class="vital-value">{{ latest.temperature }} <small>&deg;C</small></span>
+    </div>
+    <div class="vital-card">
+        <span class="vital-label">Oxygen Level</span>
+        <span class="vital-value">{{ latest.oxygen_level }} <small>%</small></span>
+    </div>
+    <div class="vital-card">
+        <span class="vital-label">Glucose</span>
+        <span class="vital-value">{{ latest.glucose_level }} <small>mg/dL</small></span>
+    </div>
+    <div class="vital-card">
+        <span class="vital-label">Status</span>
+        <span class="badge badge-{{ latest.status }}">{{ latest.status|upper }}</span>
+    </div>
+</div>
+
+<div class="card chart-card">
+    <h3>Vitals Trend (last 10 readings)</h3>
+    <canvas id="vitalsChart" height="100"></canvas>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>You haven't logged any health readings yet.</p>
+    <a href="{{ url_for('add_record') }}" class="btn btn-primary">Log Your First Reading</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if latest %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+const chartData = {{ chart_data|tojson }};
+const ctx = document.getElementById('vitalsChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: chartData.labels,
+        datasets: [
+            { label: 'Heart Rate (bpm)', data: chartData.heart_rate, borderColor: '#ef4444', tension: 0.3 },
+            { label: 'Systolic BP', data: chartData.bp_systolic, borderColor: '#3b82f6', tension: 0.3 },
+            { label: 'Diastolic BP', data: chartData.bp_diastolic, borderColor: '#60a5fa', tension: 0.3 },
+            { label: 'Oxygen %', data: chartData.oxygen_level, borderColor: '#10b981', tension: 0.3 },
+            { label: 'Glucose', data: chartData.glucose_level, borderColor: '#f59e0b', tension: 0.3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: { y: { beginAtZero: false } }
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

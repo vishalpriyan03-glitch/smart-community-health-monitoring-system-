@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}All Patients - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>All Community Members</h1>
+</div>
+<div class="card table-card">
+    <table class="data-table">
+        <thead><tr><th>Username</th><th>Email</th><th>Age</th><th>Gender</th><th>Phone</th><th>Joined</th><th></th></tr></thead>
+        <tbody>
+        {% for p in patients %}
+            <tr>
+                <td>{{ p.username }}</td>
+                <td>{{ p.email }}</td>
+                <td>{{ p.age or '—' }}</td>
+                <td>{{ p.gender or '—' }}</td>
+                <td>{{ p.phone or '—' }}</td>
+                <td>{{ p.created_at.strftime('%d %b %Y') }}</td>
+                <td><a href="{{ url_for('admin_patient_detail', user_id=p.id) }}">View Details</a></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7" class="empty-cell">No patients registered yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

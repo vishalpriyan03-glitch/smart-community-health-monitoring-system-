@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Profile - SmartHealth Monitor{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>My Profile</h1>
+    <form method="POST" action="{{ url_for('profile') }}" class="card record-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" value="{{ current_user.username }}" disabled>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" value="{{ current_user.email }}" disabled>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" value="{{ current_user.age or '' }}">
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+                    <option value="">Select</option>
+                    <option value="Male" {% if current_user.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if current_user.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if current_user.gender == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" value="{{ current_user.phone or '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
